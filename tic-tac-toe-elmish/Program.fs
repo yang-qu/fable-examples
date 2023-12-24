@@ -5,20 +5,35 @@ open Fable.Core.JsInterop
 
 importSideEffects "./styles.css"
 
-type State = { Count: int }
+type Move =
+    | X
+    | O
+    | Empty
 
-type Msg =
-    | Increment
-    | Decrement
+type State = { History: Move array list }
 
-let init () = { Count = 0 }, Cmd.none
+type Msg = NextMove of Move * int
+
+let init () = { History = [ Array.create 9 Empty ] }
 
 let update (msg: Msg) (state: State) =
     match msg with
-    | Increment -> { state with Count = state.Count + 1 }, Cmd.none
-    | Decrement -> { state with Count = state.Count - 1 }, Cmd.none
+    | NextMove(m, i) ->
+        let current = state.History |> List.head |> Array.copy
+        current[i] <- m
+
+        { state with
+            History = current :: state.History }
 
 let render (state: State) (dispatch: Msg -> unit) =
+    let squares n = 
+        let get = state.History |> List.head |> Array.get
+        match (get n) with 
+        | X -> X.ToString()
+        | O -> O.ToString()
+        | Empty -> ""
+
+
     Html.div
         [ prop.className "game"
           prop.children
@@ -29,9 +44,20 @@ let render (state: State) (dispatch: Msg -> unit) =
                             Html.div
                                 [ prop.className "board-row"
                                   prop.children
-                                      [ Html.button [ prop.className "square"; prop.text "" ]
-                                        Html.button [ prop.className "square"; prop.text "" ]
-                                        Html.button [ prop.className "square"; prop.text "" ] ] ]
+                                      [ Html.button
+                                            [ prop.className "square"
+                                              prop.text (squares 0)
+                                              prop.onClick (fun _ -> dispatch (NextMove(X, 0))) ]
+                                        Html.button
+                                            [ prop.className "square"
+                                              prop.text (squares 1)
+                                              prop.onClick (fun _ -> dispatch (NextMove(X, 1))) ]
+
+                                        Html.button 
+                                            [ 
+                                              prop.className "square"
+                                              prop.text (squares 2)
+                                              prop.onClick (fun _ -> dispatch (NextMove(X, 2)))] ] ]
                             Html.div
                                 [ prop.className "board-row"
 
@@ -54,6 +80,6 @@ let render (state: State) (dispatch: Msg -> unit) =
                                   Html.li [ prop.children [ Html.button [ prop.text "Go to move #1" ] ] ]
                                   Html.li [ prop.children [ Html.button [ prop.text "Go to move #2" ] ] ] ] ] ] ] ]
 
-Program.mkProgram init update render
+Program.mkSimple init update render
 |> Program.withReactBatched "root"
 |> Program.run
