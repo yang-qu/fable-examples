@@ -10,28 +10,38 @@ type Move =
     | O
     | Empty
 
-type State = { History: Move array list }
+type State =
+    { History: Move array list
+      XIsNext: bool }
 
-type Msg = NextMove of Move * int
+type Msg = Play of position: int
 
-let init () = { History = [ Array.create 9 Empty ] }
+let init () =
+    { History = [ Array.create 9 Empty ]
+      XIsNext = true }
 
 let update (msg: Msg) (state: State) =
     match msg with
-    | NextMove(m, i) ->
+    | Play(i) ->
         let current = state.History |> List.head |> Array.copy
-        current[i] <- m
+        current[i] <- (if state.XIsNext then X else O)
 
         { state with
-            History = current :: state.History }
+            History = current :: state.History
+            XIsNext = (List.length state.History % 2 = 0) }
 
 let render (state: State) (dispatch: Msg -> unit) =
-    let squares n = 
+    let squares n =
         let get = state.History |> List.head |> Array.get
-        match (get n) with 
+
+        match (get n) with
         | X -> X.ToString()
         | O -> O.ToString()
         | Empty -> ""
+
+    let nextPlayer xIsNext = 
+      let m = if state.XIsNext then X else O
+      sprintf "Next player: %s" (m.ToString())
 
 
     Html.div
@@ -40,38 +50,63 @@ let render (state: State) (dispatch: Msg -> unit) =
               [ Html.div
                     [ prop.className "game-board"
                       prop.children
-                          [ Html.div [ prop.className "status"; prop.text "Next player: X" ]
+                          [ Html.div [ prop.className "status"; prop.text (nextPlayer state.XIsNext) ]
                             Html.div
                                 [ prop.className "board-row"
                                   prop.children
                                       [ Html.button
                                             [ prop.className "square"
                                               prop.text (squares 0)
-                                              prop.onClick (fun _ -> dispatch (NextMove(X, 0))) ]
+                                              prop.onClick (fun _ -> dispatch (Play(0))) ]
                                         Html.button
                                             [ prop.className "square"
                                               prop.text (squares 1)
-                                              prop.onClick (fun _ -> dispatch (NextMove(X, 1))) ]
+                                              prop.onClick (fun _ -> dispatch (Play(1))) ]
 
-                                        Html.button 
-                                            [ 
-                                              prop.className "square"
+                                        Html.button
+                                            [ prop.className "square"
                                               prop.text (squares 2)
-                                              prop.onClick (fun _ -> dispatch (NextMove(X, 2)))] ] ]
+                                              prop.onClick (fun _ -> dispatch (Play(2))) ] ] ]
                             Html.div
                                 [ prop.className "board-row"
 
                                   prop.children
-                                      [ Html.button [ prop.className "square"; prop.text "" ]
-                                        Html.button [ prop.className "square"; prop.text "" ]
-                                        Html.button [ prop.className "square"; prop.text "" ] ] ]
+                                      [ Html.button
+                                            [ prop.className "square"
+                                              prop.text (squares 3)
+                                              prop.onClick (fun _ -> dispatch (Play(3))) ]
+
+                                        Html.button
+                                            [ prop.className "square"
+                                              prop.text (squares 4)
+                                              prop.onClick (fun _ -> dispatch (Play(4))) ]
+
+                                        Html.button
+                                            [ prop.className "square"
+                                              prop.text (squares 5)
+                                              prop.onClick (fun _ -> dispatch (Play(5))) ]
+
+                                        ] ]
                             Html.div
                                 [ prop.className "board-row"
 
                                   prop.children
-                                      [ Html.button [ prop.className "square"; prop.text "" ]
-                                        Html.button [ prop.className "square"; prop.text "" ]
-                                        Html.button [ prop.className "square"; prop.text "" ] ] ] ] ]
+                                      [ Html.button
+                                            [ prop.className "square"
+                                              prop.text (squares 6)
+                                              prop.onClick (fun _ -> dispatch (Play(6))) ]
+
+                                        Html.button
+                                            [ prop.className "square"
+                                              prop.text (squares 7)
+                                              prop.onClick (fun _ -> dispatch (Play(7))) ]
+
+                                        Html.button
+                                            [ prop.className "square"
+                                              prop.text (squares 8)
+                                              prop.onClick (fun _ -> dispatch (Play(8))) ]
+
+                                        ] ] ] ]
                 Html.div
                     [ prop.className "game-info"
                       prop.children

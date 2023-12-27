@@ -1,7 +1,8 @@
 import { toString, Record, Union } from "./fable_modules/fable-library.4.9.0/Types.js";
-import { int32_type, record_type, list_type, array_type, union_type } from "./fable_modules/fable-library.4.9.0/Reflection.js";
+import { int32_type, record_type, bool_type, list_type, array_type, union_type } from "./fable_modules/fable-library.4.9.0/Reflection.js";
 import { copy, fill } from "./fable_modules/fable-library.4.9.0/Array.js";
-import { ofArray, cons, head, singleton } from "./fable_modules/fable-library.4.9.0/List.js";
+import { ofArray, length, cons, head, singleton } from "./fable_modules/fable-library.4.9.0/List.js";
+import { printf, toText } from "./fable_modules/fable-library.4.9.0/String.js";
 import { createElement } from "react";
 import { createObj } from "./fable_modules/fable-library.4.9.0/Util.js";
 import { Interop_reactApi } from "./fable_modules/Feliz.2.7.0/./Interop.fs.js";
@@ -26,41 +27,41 @@ export function Move_$reflection() {
 }
 
 export class State extends Record {
-    constructor(History) {
+    constructor(History, XIsNext) {
         super();
         this.History = History;
+        this.XIsNext = XIsNext;
     }
 }
 
 export function State_$reflection() {
-    return record_type("Program.State", [], State, () => [["History", list_type(array_type(Move_$reflection()))]]);
+    return record_type("Program.State", [], State, () => [["History", list_type(array_type(Move_$reflection()))], ["XIsNext", bool_type]]);
 }
 
 export class Msg extends Union {
-    constructor(Item1, Item2) {
+    constructor(position) {
         super();
         this.tag = 0;
-        this.fields = [Item1, Item2];
+        this.fields = [position];
     }
     cases() {
-        return ["NextMove"];
+        return ["Play"];
     }
 }
 
 export function Msg_$reflection() {
-    return union_type("Program.Msg", [], Msg, () => [[["Item1", Move_$reflection()], ["Item2", int32_type]]]);
+    return union_type("Program.Msg", [], Msg, () => [[["position", int32_type]]]);
 }
 
 export function init() {
-    return new State(singleton(fill(new Array(9), 0, 9, new Move(2, []))));
+    return new State(singleton(fill(new Array(9), 0, 9, new Move(2, []))), true);
 }
 
 export function update(msg, state) {
-    const m = msg.fields[0];
-    const i = msg.fields[1] | 0;
+    const i = msg.fields[0] | 0;
     const current = copy(head(state.History));
-    current[i] = m;
-    return new State(cons(current, state.History));
+    current[i] = (state.XIsNext ? (new Move(0, [])) : (new Move(1, [])));
+    return new State(cons(current, state.History), (length(state.History) % 2) === 0);
 }
 
 export function render(state, dispatch) {
@@ -79,45 +80,68 @@ export function render(state, dispatch) {
                 return toString(new Move(0, []));
         }
     };
+    const nextPlayer = (xIsNext) => {
+        const m = state.XIsNext ? (new Move(0, [])) : (new Move(1, []));
+        const arg = toString(m);
+        return toText(printf("Next player: %s"))(arg);
+    };
     return createElement("div", createObj(ofArray([["className", "game"], (elems_8 = [createElement("div", createObj(ofArray([["className", "game-board"], (elems_3 = [createElement("div", {
         className: "status",
-        children: "Next player: X",
+        children: nextPlayer(state.XIsNext),
     }), createElement("div", createObj(ofArray([["className", "board-row"], (elems = [createElement("button", {
         className: "square",
         children: squares(0),
         onClick: (_arg) => {
-            dispatch(new Msg(new Move(0, []), 0));
+            dispatch(new Msg(0));
         },
     }), createElement("button", {
         className: "square",
         children: squares(1),
         onClick: (_arg_1) => {
-            dispatch(new Msg(new Move(0, []), 1));
+            dispatch(new Msg(1));
         },
     }), createElement("button", {
         className: "square",
         children: squares(2),
         onClick: (_arg_2) => {
-            dispatch(new Msg(new Move(0, []), 2));
+            dispatch(new Msg(2));
         },
     })], ["children", Interop_reactApi.Children.toArray(Array.from(elems))])]))), createElement("div", createObj(ofArray([["className", "board-row"], (elems_1 = [createElement("button", {
         className: "square",
-        children: "",
+        children: squares(3),
+        onClick: (_arg_3) => {
+            dispatch(new Msg(3));
+        },
     }), createElement("button", {
         className: "square",
-        children: "",
+        children: squares(4),
+        onClick: (_arg_4) => {
+            dispatch(new Msg(4));
+        },
     }), createElement("button", {
         className: "square",
-        children: "",
+        children: squares(5),
+        onClick: (_arg_5) => {
+            dispatch(new Msg(5));
+        },
     })], ["children", Interop_reactApi.Children.toArray(Array.from(elems_1))])]))), createElement("div", createObj(ofArray([["className", "board-row"], (elems_2 = [createElement("button", {
         className: "square",
-        children: "",
+        children: squares(6),
+        onClick: (_arg_6) => {
+            dispatch(new Msg(6));
+        },
     }), createElement("button", {
         className: "square",
-        children: "",
+        children: squares(7),
+        onClick: (_arg_7) => {
+            dispatch(new Msg(7));
+        },
     }), createElement("button", {
         className: "square",
-        children: "",
+        children: squares(8),
+        onClick: (_arg_8) => {
+            dispatch(new Msg(8));
+        },
     })], ["children", Interop_reactApi.Children.toArray(Array.from(elems_2))])])))], ["children", Interop_reactApi.Children.toArray(Array.from(elems_3))])]))), createElement("div", createObj(ofArray([["className", "game-info"], (elems_7 = [(children = ofArray([createElement("li", createObj(singleton((elems_4 = [createElement("button", {
         children: "Go to game start",
     })], ["children", Interop_reactApi.Children.toArray(Array.from(elems_4))])))), createElement("li", createObj(singleton((elems_5 = [createElement("button", {
