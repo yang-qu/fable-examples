@@ -28,7 +28,8 @@ let update (msg: Msg) (state: State) =
     match msg with
     | Play p ->
         let endIndex = List.length state.History - 1
-        let history = state.History[endIndex - state.CurrentMove .. endIndex]
+        let at = endIndex - state.CurrentMove
+        let history = state.History[at .. endIndex]
         let current = history |> List.head |> Array.copy
         current[p] <- if state.XIsNext then X else O
 
@@ -69,6 +70,12 @@ let render (state: State) (dispatch: Msg -> unit) =
 
     let moves = state.History |> List.mapi (fun i _ -> item i)
 
+    let square n =
+        Html.button
+            [ prop.className "square"
+              prop.text (squares n)
+              prop.onClick (fun _ -> dispatch (Play n)) ]
+
     Html.div
         [ prop.className "game"
           prop.children
@@ -76,62 +83,9 @@ let render (state: State) (dispatch: Msg -> unit) =
                     [ prop.className "game-board"
                       prop.children
                           [ Html.div [ prop.className "status"; prop.text status ]
-                            Html.div
-                                [ prop.className "board-row"
-                                  prop.children
-                                      [ Html.button
-                                            [ prop.className "square"
-                                              prop.text (squares 0)
-                                              prop.onClick (fun _ -> dispatch (Play 0)) ]
-                                        Html.button
-                                            [ prop.className "square"
-                                              prop.text (squares 1)
-                                              prop.onClick (fun _ -> dispatch (Play 1)) ]
-
-                                        Html.button
-                                            [ prop.className "square"
-                                              prop.text (squares 2)
-                                              prop.onClick (fun _ -> dispatch (Play 2)) ] ] ]
-                            Html.div
-                                [ prop.className "board-row"
-
-                                  prop.children
-                                      [ Html.button
-                                            [ prop.className "square"
-                                              prop.text (squares 3)
-                                              prop.onClick (fun _ -> dispatch (Play 3)) ]
-
-                                        Html.button
-                                            [ prop.className "square"
-                                              prop.text (squares 4)
-                                              prop.onClick (fun _ -> dispatch (Play 4)) ]
-
-                                        Html.button
-                                            [ prop.className "square"
-                                              prop.text (squares 5)
-                                              prop.onClick (fun _ -> dispatch (Play 5)) ]
-
-                                        ] ]
-                            Html.div
-                                [ prop.className "board-row"
-
-                                  prop.children
-                                      [ Html.button
-                                            [ prop.className "square"
-                                              prop.text (squares 6)
-                                              prop.onClick (fun _ -> dispatch (Play 6)) ]
-
-                                        Html.button
-                                            [ prop.className "square"
-                                              prop.text (squares 7)
-                                              prop.onClick (fun _ -> dispatch (Play 7)) ]
-
-                                        Html.button
-                                            [ prop.className "square"
-                                              prop.text (squares 8)
-                                              prop.onClick (fun _ -> dispatch (Play 8)) ]
-
-                                        ] ] ] ]
+                            Html.div [ prop.className "board-row"; prop.children [ square 0; square 1; square 2 ] ]
+                            Html.div [ prop.className "board-row"; prop.children [ square 3; square 4; square 5 ] ]
+                            Html.div [ prop.className "board-row"; prop.children [ square 6; square 7; square 8 ] ] ] ]
                 Html.div [ prop.className "game-info"; prop.children [ Html.ol moves ] ] ] ]
 
 Program.mkSimple init update render
