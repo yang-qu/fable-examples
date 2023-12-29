@@ -1,7 +1,7 @@
 import { toString, Record, Union } from "./fable_modules/fable-library.4.9.0/Types.js";
 import { record_type, int32_type, bool_type, list_type, array_type, union_type } from "./fable_modules/fable-library.4.9.0/Reflection.js";
 import { copy, fill } from "./fable_modules/fable-library.4.9.0/Array.js";
-import { mapIndexed, ofArray, item as item_1, cons, head, getSlice, length, singleton } from "./fable_modules/fable-library.4.9.0/List.js";
+import { mapIndexed, item as item_1, cons, getSlice, head, tail, isEmpty, filter, ofArray, length, singleton } from "./fable_modules/fable-library.4.9.0/List.js";
 import { printf, toText } from "./fable_modules/fable-library.4.9.0/String.js";
 import { createElement } from "react";
 import { createObj } from "./fable_modules/fable-library.4.9.0/Util.js";
@@ -64,6 +64,67 @@ export function slice(history, currentMove) {
     return [startIndex, endIndex];
 }
 
+export function calculateWiner(squares) {
+    const lines = ofArray([[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6]]);
+    const winLine = filter((tupledArg) => {
+        const a = tupledArg[0] | 0;
+        const b = tupledArg[1] | 0;
+        const c = tupledArg[2] | 0;
+        const matchValue = squares[a];
+        const matchValue_1 = squares[b];
+        const matchValue_2 = squares[c];
+        let matchResult;
+        switch (matchValue.tag) {
+            case 0: {
+                if (matchValue_1.tag === 0) {
+                    if (matchValue_2.tag === 0) {
+                        matchResult = 0;
+                    }
+                    else {
+                        matchResult = 2;
+                    }
+                }
+                else {
+                    matchResult = 2;
+                }
+                break;
+            }
+            case 1: {
+                if (matchValue_1.tag === 1) {
+                    if (matchValue_2.tag === 1) {
+                        matchResult = 1;
+                    }
+                    else {
+                        matchResult = 2;
+                    }
+                }
+                else {
+                    matchResult = 2;
+                }
+                break;
+            }
+            default:
+                matchResult = 2;
+        }
+        switch (matchResult) {
+            case 0:
+                return true;
+            case 1:
+                return true;
+            default:
+                return false;
+        }
+    }, lines);
+    if (!isEmpty(winLine)) {
+        const xs = tail(winLine);
+        const a_1 = head(winLine)[0] | 0;
+        return squares[a_1];
+    }
+    else {
+        return void 0;
+    }
+}
+
 export function update(msg, state) {
     if (msg.tag === 1) {
         const m = msg.fields[0] | 0;
@@ -75,10 +136,17 @@ export function update(msg, state) {
         const s = patternInput[0] | 0;
         const e = patternInput[1] | 0;
         const history = getSlice(s, e, state.History);
-        const next = copy(head(history));
-        if (next[p].tag === 2) {
-            next[p] = (state.XIsNext ? (new Square(0, [])) : (new Square(1, [])));
-            return new State(cons(next, history), (length(history) % 2) === 0, length(history));
+        const currentSquares = head(history);
+        const winer = calculateWiner(currentSquares);
+        if (winer == null) {
+            const next = copy(currentSquares);
+            if (next[p].tag === 2) {
+                next[p] = (state.XIsNext ? (new Square(0, [])) : (new Square(1, [])));
+                return new State(cons(next, history), (length(history) % 2) === 0, length(history));
+            }
+            else {
+                return state;
+            }
         }
         else {
             return state;
@@ -104,8 +172,15 @@ export function render(state, dispatch) {
         }
     };
     let status;
-    const m = state.XIsNext ? (new Square(0, [])) : (new Square(1, []));
-    status = toText(printf("Next player: %O"))(m);
+    const winer = calculateWiner(currentSquares);
+    if (winer == null) {
+        const m = state.XIsNext ? (new Square(0, [])) : (new Square(1, []));
+        status = toText(printf("Next player: %O"))(m);
+    }
+    else {
+        const w = winer;
+        status = toText(printf("Winer: %O"))(w);
+    }
     const item = (i) => {
         let elems;
         const desc = (i > 0) ? toText(printf("Go to move %d"))(i) : "Got to game start";
