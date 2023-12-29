@@ -58,6 +58,12 @@ export function init() {
     return new State(singleton(fill(new Array(9), 0, 9, new Square(2, []))), true, 0);
 }
 
+export function slice(history, currentMove) {
+    const endIndex = (length(history) - 1) | 0;
+    const startIndex = (endIndex - currentMove) | 0;
+    return [startIndex, endIndex];
+}
+
 export function update(msg, state) {
     if (msg.tag === 1) {
         const m = msg.fields[0] | 0;
@@ -65,9 +71,10 @@ export function update(msg, state) {
     }
     else {
         const p = msg.fields[0] | 0;
-        const endIndex = (length(state.History) - 1) | 0;
-        const at = (endIndex - state.CurrentMove) | 0;
-        const history = getSlice(at, endIndex, state.History);
+        const patternInput = slice(state.History, state.CurrentMove);
+        const s = patternInput[0] | 0;
+        const e = patternInput[1] | 0;
+        const history = getSlice(s, e, state.History);
         const current = copy(head(history));
         current[p] = (state.XIsNext ? (new Square(0, [])) : (new Square(1, [])));
         return new State(cons(current, history), (length(history) % 2) === 0, length(history));
@@ -77,8 +84,7 @@ export function update(msg, state) {
 export function render(state, dispatch) {
     let elems_6, elems_4, elems_1, elems_2, elems_3, elems_5;
     let currentSquares;
-    const endIndex = (length(state.History) - 1) | 0;
-    const at = (endIndex - state.CurrentMove) | 0;
+    const at = slice(state.History, state.CurrentMove)[0] | 0;
     currentSquares = item_1(at, state.History);
     const squares = (n) => {
         const get$ = (index) => currentSquares[index];

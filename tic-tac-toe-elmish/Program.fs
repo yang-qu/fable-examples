@@ -24,12 +24,16 @@ let init () =
       XIsNext = true
       CurrentMove = 0 }
 
+let slice history currentMove =
+    let endIndex = List.length history - 1
+    let startIndex = endIndex - currentMove
+    (startIndex, endIndex)
+
 let update (msg: Msg) (state: State) =
     match msg with
     | Play p ->
-        let endIndex = List.length state.History - 1
-        let at = endIndex - state.CurrentMove
-        let history = state.History[at .. endIndex]
+        let s, e = slice state.History state.CurrentMove
+        let history = state.History[s .. e]
         let current = history |> List.head |> Array.copy
         current[p] <- if state.XIsNext then X else O
 
@@ -41,8 +45,7 @@ let update (msg: Msg) (state: State) =
 
 let render (state: State) (dispatch: Msg -> unit) =
     let currentSquares =
-        let endIndex = List.length state.History - 1
-        let at = (endIndex - state.CurrentMove)
+        let at, _ = slice state.History state.CurrentMove
         state.History |> List.item at
 
     let squares n =
