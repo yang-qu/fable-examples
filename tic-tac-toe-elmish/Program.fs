@@ -35,12 +35,15 @@ let update (msg: Msg) (state: State) =
         let s, e = slice state.History state.CurrentMove
         let history = state.History[s .. e]
         let current = history |> List.head |> Array.copy
-        current[p] <- if state.XIsNext then X else O
+        match current[p] with 
+        | Empty -> 
+            current[p] <- if state.XIsNext then X else O
+            { state with
+                History = current :: history
+                XIsNext = List.length history % 2 = 0
+                CurrentMove = List.length history }
+        | _ -> state
 
-        { state with
-            History = current :: history
-            XIsNext = List.length history % 2 = 0
-            CurrentMove = List.length history }
     | JumpToMove m -> { state with CurrentMove = m }
 
 let render (state: State) (dispatch: Msg -> unit) =
