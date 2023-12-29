@@ -75,10 +75,10 @@ export function update(msg, state) {
         const s = patternInput[0] | 0;
         const e = patternInput[1] | 0;
         const history = getSlice(s, e, state.History);
-        const current = copy(head(history));
-        if (current[p].tag === 2) {
-            current[p] = (state.XIsNext ? (new Square(0, [])) : (new Square(1, [])));
-            return new State(cons(current, history), (length(history) % 2) === 0, length(history));
+        const next = copy(head(history));
+        if (next[p].tag === 2) {
+            next[p] = (state.XIsNext ? (new Square(0, [])) : (new Square(1, [])));
+            return new State(cons(next, history), (length(history) % 2) === 0, length(history));
         }
         else {
             return state;

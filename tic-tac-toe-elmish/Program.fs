@@ -33,13 +33,15 @@ let update (msg: Msg) (state: State) =
     match msg with
     | Play p ->
         let s, e = slice state.History state.CurrentMove
-        let history = state.History[s .. e]
-        let current = history |> List.head |> Array.copy
-        match current[p] with 
-        | Empty -> 
-            current[p] <- if state.XIsNext then X else O
+        let history = state.History[s..e]
+        let next = history |> List.head |> Array.copy
+
+        match next[p] with
+        | Empty ->
+            next[p] <- if state.XIsNext then X else O
+
             { state with
-                History = current :: history
+                History = next :: history
                 XIsNext = List.length history % 2 = 0
                 CurrentMove = List.length history }
         | _ -> state
