@@ -100,8 +100,7 @@ export function render(state, dispatch) {
     };
     let status;
     const m = state.XIsNext ? (new Square(0, [])) : (new Square(1, []));
-    const arg = toString(m);
-    status = toText(printf("Next player: %s"))(arg);
+    status = toText(printf("Next player: %O"))(m);
     const item = (i) => {
         let elems;
         const desc = (i > 0) ? toText(printf("Go to move %d"))(i) : "Got to game start";

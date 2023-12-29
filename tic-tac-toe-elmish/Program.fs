@@ -52,13 +52,13 @@ let render (state: State) (dispatch: Msg -> unit) =
         let get = currentSquares |> Array.get
 
         match (get n) with
-        | X -> X.ToString()
-        | O -> O.ToString()
+        | X -> string X
+        | O -> string O
         | Empty -> ""
 
     let status =
         let m = if state.XIsNext then X else O
-        sprintf "Next player: %s" (m.ToString())
+        sprintf "Next player: %O" m
 
     let item (i: int) =
         let desc =
