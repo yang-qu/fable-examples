@@ -60,9 +60,7 @@ let update (msg: Msg) (state: State) =
           let history = state.History[s..e]
           let currentSquares = history |> List.head 
           let winer = calculateWiner currentSquares
-          match winer with 
-          | Some _ -> state
-          | None ->
+          let stateWithNewPlay = 
             let next = currentSquares|> Array.copy
 
             match next[p] with
@@ -74,6 +72,10 @@ let update (msg: Msg) (state: State) =
                     XIsNext = List.length history % 2 = 0
                     CurrentMove = List.length history }
             | _ -> state
+
+          match winer with 
+          | Some _ -> state
+          | None -> stateWithNewPlay
 
     | JumpToMove m -> { state with CurrentMove = m }
 
