@@ -3,7 +3,7 @@ open Elmish
 open Elmish.React
 open Fable.Core.JsInterop
 
-importSideEffects "./styles.css"
+importSideEffects "../styles.css"
 
 type Square =
     | X

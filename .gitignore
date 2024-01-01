@@ -400,5 +400,8 @@ FodyWeavers.xsd
 # Fable
 fable_modules/
 
+# Fable Output
+dist/
+
 # safe-fs
 build/
