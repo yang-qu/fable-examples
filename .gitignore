@@ -405,3 +405,6 @@ dist/
 
 # safe-fs
 build/
+
+# Jetbrains
+.idea/
