@@ -1,4 +1,6 @@
-﻿open Feliz
+﻿module Program
+
+open Feliz
 open Elmish
 open Elmish.React
 open Fable.Core.JsInterop
