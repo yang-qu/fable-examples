@@ -6,9 +6,10 @@ open Feliz
 open Fable.Core.JsInterop
 
 importSideEffects "../styles.css"
-
+// Entry point must be in a separate file
+// for Vite Hot Reload to work
 [<JSX.Component>]
-let Square () = MyComponents.Square()
+let Game () = TicTacToe.Game()
 
 let root = ReactDOM.createRoot (document.getElementById "root")
-root.render(Square() |> toReact)
+root.render(Game() |> toReact)
