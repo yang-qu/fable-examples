@@ -31,7 +31,7 @@ let slice history currentMove =
     let startIndex = endIndex - currentMove
     (startIndex, endIndex)
 
-let calculateWiner (squares: Square array) =
+let calculateWinner (squares: Square array) =
     let lines =
         [ (0, 1, 2)
           (3, 4, 5)
@@ -61,7 +61,7 @@ let update (msg: Msg) (state: State) =
           let s, e = slice state.History state.CurrentMove
           let history = state.History[s..e]
           let currentSquares = history |> List.head 
-          let winer = calculateWiner currentSquares
+          let winner = calculateWinner currentSquares
           let stateWithNewPlay = 
             let next = currentSquares|> Array.copy
 
@@ -75,7 +75,7 @@ let update (msg: Msg) (state: State) =
                     CurrentMove = List.length history }
             | _ -> state
 
-          match winer with 
+          match winner with 
           | Some _ -> state
           | None -> stateWithNewPlay
 
@@ -95,8 +95,8 @@ let render (state: State) (dispatch: Msg -> unit) =
         | Empty -> ""
 
     let status =
-        let winer = calculateWiner currentSquares
-        match winer with 
+        let winner = calculateWinner currentSquares
+        match winner with 
         | Some w -> sprintf "Winer: %O" w
         | None -> 
           let m = if state.XIsNext then X else O
