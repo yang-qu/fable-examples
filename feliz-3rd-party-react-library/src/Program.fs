@@ -3,6 +3,9 @@
 open Feliz
 open Fable.Core.JsInterop
 
+// https://safe-stack.github.io/docs/recipes/javascript/third-party-react-package/
+// https://www.compositional-it.com/news-blog/f-wrappers-for-react-components/
+
 let muiButton: obj = importDefault "@mui/material/Button"
 
 type MuiButton =
