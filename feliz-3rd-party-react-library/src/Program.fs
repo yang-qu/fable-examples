@@ -15,7 +15,7 @@ type MuiButton =
 let ButtonView() =
     MuiButton.create [
         MuiButton.Variant "contained"
-        MuiButton.Children [(Html.text "Next")]
+        MuiButton.Children [Html.text "Next"]
     ]
 
 open Browser.Dom
