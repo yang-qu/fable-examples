@@ -1,6 +1,6 @@
 # Fable Samples
 
-Samples related to F# Fable and its related technologies. 
+Samples for F# Fable and its related technologies. 
 
 [counter-jsx](counter-jsx)
 
