@@ -4,9 +4,6 @@ open Elmish
 open Elmish.React
 open Fable.Form.Simple
 open Fable.Form.Simple.Bulma
-open Fable.Core.JsInterop
-
-
 
 type Values =
     { Email: string

@@ -5,29 +5,65 @@ open Elmish.React
 open Fable.Form.Simple
 open Fable.Form.Simple.My
 
-type Values = { RememberMe: bool }
+type Values =
+    { Email: string
+      Password: string
+      RememberMe: bool }
 
 type Model = Form.View.Model<Values>
 
 type Msg =
     | FormChanged of Model
-    | LogIn of bool
+    | LogIn of string * string * bool
 
 let init () =
-    { RememberMe = false } |> Form.View.idle, Cmd.none
+    { Email = ""
+      Password = ""
+      RememberMe = false }
+    |> Form.View.idle,
+    Cmd.none
 
 let update (msg: Msg) (model: Model) =
     match msg with
     // We received a new form model, store it
     | FormChanged newModel -> newModel, Cmd.none
-    | LogIn(_rememberMe) ->
+
+    // The form has been submitted
+    // Here, we have access to the value submitted from the from
+    | LogIn(_email, _password, _rememberMe) ->
         // For this example, we just set a message in the Form view
         { model with
             State = Form.View.Success "You have been logged in successfully" },
         Cmd.none
 
-
 let form: Form.Form<Values, Msg, _> =
+    let emailField =
+        Form.textField
+            { Parser =
+                fun value ->
+                    if value.Contains("@") then
+                        Ok value
+                    else
+                        Error "The e-mail address must contain a '@' symbol"
+              Value = fun values -> values.Email
+              Update = fun newValue values -> { values with Email = newValue }
+              Error = fun _ -> None
+              Attributes =
+                { Label = "Email"
+                  Placeholder = "some@email.com"
+                  HtmlAttributes = [] } }
+
+    let passwordField =
+        Form.passwordField
+            { Parser = Ok
+              Value = fun values -> values.Password
+              Update = fun newValue values -> { values with Password = newValue }
+              Error = fun _ -> None
+              Attributes =
+                { Label = "Password"
+                  Placeholder = "Your password"
+                  HtmlAttributes = [] } }
+
     let rememberMe =
         Form.checkboxField
             { Parser = Ok
@@ -36,9 +72,12 @@ let form: Form.Form<Values, Msg, _> =
               Error = fun _ -> None
               Attributes = { Text = "Remember me" } }
 
-    let onSubmit = fun rememberMe -> LogIn(rememberMe)
+    let onSubmit = fun email password rememberMe -> LogIn(email, password, rememberMe)
 
-    Form.succeed onSubmit |> Form.append rememberMe
+    Form.succeed onSubmit
+    |> Form.append emailField
+    |> Form.append passwordField
+    |> Form.append rememberMe
 
 
 let view (model: Model) (dispatch: Dispatch<Msg>) =
@@ -52,5 +91,4 @@ let view (model: Model) (dispatch: Dispatch<Msg>) =
 
 Program.mkProgram init update view
 |> Program.withReactBatched "root"
-|> Program.withConsoleTrace
 |> Program.run
