@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Fable.Form.Simple.My.fs" />
+    <Compile Include="MyForm.fs" />
+    <Compile Include="Program.fs" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Fable.Core" Version="4.2.0" />
+    <PackageReference Include="Fable.Elmish" Version="4.1.0" />
+    <PackageReference Include="Fable.Elmish.React" Version="4.0.0" />
+    <PackageReference Include="Fable.Form.Simple" Version="4.1.0" />
+    <PackageReference Include="FAble.Form.Simple.Bulma" Version="4.1.0" />
+    <PackageReference Include="Feliz" Version="2.7.0" />
+    <PackageReference Update="FSharp.Core" Version="8.0.101" />
+  </ItemGroup>
+</Project>
