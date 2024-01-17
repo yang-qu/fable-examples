@@ -75,7 +75,8 @@ let form: Form.Form<Values, Msg, _> =
               Update = fun newValue values -> { values with RememberMe = newValue }
               Error = fun _ -> None
               Attributes = { Text = "Remember me" } }
-
+  
+    
     let onSubmit = fun email password rememberMe -> LogIn(email, password, rememberMe)
 
     Form.succeed onSubmit
