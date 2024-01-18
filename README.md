@@ -32,6 +32,6 @@ Implemented Tic-tac-toe in this [React tutorial](https://react.dev/learn/tutoria
 
 [tic-tac-toe-react](tic-tac-toe-react)
 
-This is from the [React tutorial](https://react.dev/learn/tutorial-tic-tac-toe)
+This is from the [React tutorial](https://react.dev/learn/tutorial-tic-tac-toe).
 It's only here to compare with its [tic-tac-toe-elmish](tic-tac-toe-elmish)
 
