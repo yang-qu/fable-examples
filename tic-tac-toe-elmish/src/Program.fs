@@ -135,5 +135,4 @@ let render (state: State) (dispatch: Msg -> unit) =
 
 Program.mkSimple init update render
 |> Program.withReactBatched "root"
-|> Program.withConsoleTrace
 |> Program.run
