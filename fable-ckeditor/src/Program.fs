@@ -13,7 +13,7 @@ type Model = {
 }
 
 type Msg =
-    | SetTextInput 
+    | SetTextInput of string 
     | EditorReady of obj
 
 let init () : Model = { DescInput = ""; Editor = createObj []}
@@ -22,13 +22,17 @@ let init () : Model = { DescInput = ""; Editor = createObj []}
 
 let update (msg: Msg) (model: Model) =
     match msg with
-    | SetTextInput -> { model with DescInput = model.Editor?getData() }
+    | SetTextInput input -> { model with DescInput = input }
     | EditorReady ed -> { model with Editor = ed }
 
 
 // VIEW (rendered with React)
 
 let view (model: Model) (dispatch: Msg -> Unit) =
+    let handleOnChange (ev: obj) (editor: obj) =
+            console.log (editor?getData())
+            let input = editor?getData()
+            dispatch (SetTextInput input)
     JSX.jsx
         $"""
         import {{ CKEditor }} from '@ckeditor/ckeditor5-react';
@@ -37,7 +41,7 @@ let view (model: Model) (dispatch: Msg -> Unit) =
             editor={{ ClassicEditor }}
             data="<p>Hello from CKEditor&nbsp;5!</p>"
             onReady={ fun ed -> dispatch (EditorReady ed)}
-            onChange={ fun _ -> dispatch SetTextInput }
+            onChange={ System.Func<_,_,_> handleOnChange }
         />
         """
     |> toReact
