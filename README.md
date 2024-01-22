@@ -35,3 +35,11 @@ Implemented Tic-tac-toe in this [React tutorial](https://react.dev/learn/tutoria
 This is from the [React tutorial](https://react.dev/learn/tutorial-tic-tac-toe).
 It's only here to compare with its [tic-tac-toe-elmish](tic-tac-toe-elmish)
 
+[form](form)
+
+Fable form example with views styled in Bootstrap 
+
+[fable-ckeditor](fable-ckeditor) 
+
+CKEditor example with Elmish
+
